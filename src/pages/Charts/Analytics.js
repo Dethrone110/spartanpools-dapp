@@ -26,32 +26,12 @@ const Analytics = (props) => {
 
                     <Breadcrumbs title="Charts" breadcrumbItem="Spartan charts"/>
 
-                    <Row>
-                        <Col lg={6}>
-                            <Card>
-                                <CardBody>
-                                    <CardTitle className="mb-4">Line with Data Labels</CardTitle>
-                                    <LineApexChart/>
-                                </CardBody>
-                            </Card>
-                        </Col>
-
-                        <Col lg={6}>
-                            <Card>
-                                <CardBody>
-                                    <CardTitle className="mb-4">Dashed Line</CardTitle>
-                                    <DashedLine/>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
-
                     {/*<Row>*/}
                     {/*    <Col lg={6}>*/}
                     {/*        <Card>*/}
                     {/*            <CardBody>*/}
-                    {/*                <CardTitle className="mb-4"> Spline Area </CardTitle>*/}
-                    {/*                <SplineArea/>*/}
+                    {/*                <CardTitle className="mb-4">Line with Data Labels</CardTitle>*/}
+                    {/*                <LineApexChart/>*/}
                     {/*            </CardBody>*/}
                     {/*        </Card>*/}
                     {/*    </Col>*/}
@@ -59,12 +39,32 @@ const Analytics = (props) => {
                     {/*    <Col lg={6}>*/}
                     {/*        <Card>*/}
                     {/*            <CardBody>*/}
-                    {/*                <CardTitle className="mb-4"> Column Charts </CardTitle>*/}
-                    {/*                <Apaexlinecolumn/>*/}
+                    {/*                <CardTitle className="mb-4">Dashed Line</CardTitle>*/}
+                    {/*                <DashedLine/>*/}
                     {/*            </CardBody>*/}
                     {/*        </Card>*/}
                     {/*    </Col>*/}
                     {/*</Row>*/}
+
+                    <Row>
+                        <Col lg={6}>
+                            <Card>
+                                <CardBody>
+                                    <CardTitle className="mb-4">7 Days Price Chart</CardTitle>
+                                    <SplineArea/>
+                                </CardBody>
+                            </Card>
+                        </Col>
+
+                        {/*<Col lg={6}>*/}
+                        {/*    <Card>*/}
+                        {/*        <CardBody>*/}
+                        {/*            <CardTitle className="mb-4"> Column Charts </CardTitle>*/}
+                        {/*            <Apaexlinecolumn/>*/}
+                        {/*        </CardBody>*/}
+                        {/*    </Card>*/}
+                        {/*</Col>*/}
+                    </Row>
 
                     {/*<Row>*/}
                     {/*    <Col lg={6}>*/}
