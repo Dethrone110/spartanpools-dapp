@@ -57,6 +57,7 @@ export const getSpartaPrice = async () => {
     return resp.data["spartan-protocol-token"].usd
 }
 
+
 export const getTokenContract = (address) => {
     var web3 = getWeb3()
     return new web3.eth.Contract(ERC20_ABI, address)

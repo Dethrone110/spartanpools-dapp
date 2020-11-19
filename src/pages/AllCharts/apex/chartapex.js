@@ -1,22 +1,64 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import ReactApexChart from 'react-apexcharts';
+
+// const url = 'https://api.coingecko.com/api/v3/coins/spartan-protocol-token?tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false';
+
+//const url = 'https://api.coingecko.com/api/v3/coins/list';
+
+const url = 'https://api.coingecko.com/api/v3/coins/spartan-protocol-token/market_chart?vs_currency=usd&days=5&interval=daily';
+
 
 class chartapex extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
-            series:[{name:"High - 2018",data:[26,24,32,36,33,31,33]},{name:"Low - 2018",data:[14,11,16,12,17,13,12]}],
-            options:{chart:{zoom:{enabled:!1},toolbar:{show:!1}},colors:["#556ee6","#34c38f"],dataLabels:{enabled:!0},stroke:{width:[3,3],curve:"straight"},title:{text:"Average High & Low Temperature",align:"left"},grid:{row:{colors:["transparent","transparent"],opacity:.2},borderColor:"#f1f1f1"},markers:{style:"inverted",size:6},xaxis:{categories:["Jan","Feb","Mar","Apr","May","Jun","Jul"],title:{text:"Month"}},yaxis:{title:{text:"Temperature"},min:5,max:40},legend:{position:"top",horizontalAlign:"right",floating:!0,offsetY:-25,offsetX:-5},responsive:[{breakpoint:600,options:{chart:{toolbar:{show:!1}},legend:{show:!1}}}]}
-        }
+            error: null,
+            isLoaded: false,
+            prices: []
+        };
     }
-    render() {
-        return (
-            <React.Fragment>
-                <ReactApexChart options={this.state.options} series={this.state.series} type="line" height="380" />
-            </React.Fragment>
 
-        );
+    componentDidMount() {
+        fetch(url)
+            .then(res => res.json())
+            .then((result) => {
+                    console.log(result);
+                    this.setState({
+                        isLoaded: true,
+                        items: result //  FILTER ?
+                    });
+
+
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            )
+    }
+
+
+    render() {
+        const {error, isLoaded, items} = this.state;
+        if (error) {
+            return <div>Error: {error.message}</div>;
+        } else if (!isLoaded) {
+            return <div>Loading...</div>;
+        } else {
+            return (
+                <ul>
+                    <p>{items.prices}</p>
+                    {/*{items.map(item => (*/}
+                    {/*    <li key={item.id}>*/}
+                    {/*        {item.name} {item.symbol}*/}
+                    {/*    </li>*/}
+                    {/*))}*/}
+
+                </ul>
+            );
+        }
     }
 }
 

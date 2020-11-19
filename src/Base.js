@@ -11,6 +11,8 @@ import Swap from './pages/Swap'
 import CreatePool from './pages/CreatePool'
 import Earn from './pages/Earn'
 
+import Charts from './pages/Charts/Analytics'
+
 import PagesStarter from "./pages/Utility/pages-starter";
 import PagesFaqs from "./pages/Utility/pages-faqs";
 import ScrollToTop from "./components/Common/ScrollToTop"
@@ -65,6 +67,7 @@ const Base = () => {
                     {/*Help*/}
                     <Route path="/start" exact component={PagesStarter}/>
                     <Route path="/faq" exact component={PagesFaqs}/>
+                    <Route path="/charts" exact component={Charts}/>
                 </Switch>
             </div>
         </Router>
