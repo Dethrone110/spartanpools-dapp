@@ -12,15 +12,15 @@ import DAO from '../artifacts/Dao.json'
 import Bondv2 from '../artifacts/BondV2.json'
 import Bondv3 from '../artifacts/BondV3.json'
 
-const net = '';
+const net = 'testnet';
 
 // CURRENT CONTRACT ADDRESSES
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
 export const WBNB_ADDR = net === 'testnet' ? '0x27c6487C9B115c184Bb04A1Cf549b670a22D2870' : '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 export const SPARTA_ADDR = net === 'testnet' ? '0xb58a43D2D9809ff4393193de536F242fefb03613' : '0xE4Ae305ebE1AbE663f261Bc00534067C80ad677C'
-export const UTILS_ADDR = net === 'testnet' ? '0x0a30aF25e652354832Ec5695981F2ce8b594e8B3' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
-export const DAO_ADDR = net === 'testnet' ? '0x1b83a813045165c81d84b9f5d6916067b57FF9C0' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
-export const ROUTER_ADDR = net === 'testnet' ? '0x111589F4cE6f10E72038F1E4a19F7f19bF31Ee35' : '0x6239891FC4030dc050fB9F7083aa68a2E4Fe426D'
+export const UTILS_ADDR = net === 'testnet' ? '0xfEB0a2A1AE523E4786f6916ff00E037fF82Ab1A6' :'0xCaF0366aF95E8A03E269E52DdB3DbB8a00295F91'
+export const DAO_ADDR = net === 'testnet' ? '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0' : '0x04e283c9350Bab8A1243ccfc1dd9BF1Ab72dF4f0'
+export const ROUTER_ADDR = net === 'testnet' ? '0xfc717FF782E7651470C6c0a835e1761a64cDdE0b' : '0x6239891FC4030dc050fB9F7083aa68a2E4Fe426D'
 export const BONDv3_ADDR = net === 'testnet' ? '0xa11D0a9F919EDc6D72aF8F90D56735cAd0EBE836' : '0xf2EbA4b92fAFD47a6403d24a567b38C07D7A5b43'
 export const INCENTIVE_ADDR = net === 'testnet' ? '0xc241d694d51db9e934b147130cfefe8385813b86' : '0xdbe936901aeed4718608d0574cbaab01828ae016'
 
