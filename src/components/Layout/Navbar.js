@@ -36,6 +36,7 @@ const Navbar = (props) => {
                                 <div className={classname("dropdown-menu")}>
                                     <Link to="/pools" className="dropdown-item"><i className="bx bx-swim mr-1"/>{props.t('Pools')}</Link>
                                     <Link to="/positions" className="dropdown-item"><i className='mr-1 bx bx-trending-up' />Positions</Link>
+                                    <Link to="/pool/create" className="dropdown-item"><i className='mr-1 bx bx-trending-up' />Create Pool</Link>
                                 </div>
 
                             </li>
