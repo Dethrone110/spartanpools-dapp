@@ -26,24 +26,24 @@ const Header = (props) => {
 
   const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-  useEffect(() => {
-    getTotalSupply()
-    // eslint-disable-next-line
-  }, [])
+  // useEffect(() => {
+  //   getTotalSupply()
+  //   // eslint-disable-next-line
+  // }, [])
 
-  const [totalSupply, setTotalSupply] = useState('')
-  const [circSupply, setCircSupply] = useState('')
-  const getTotalSupply = async () => {
-    let contract = getSpartaContract()
-    contract = contract.methods
-    let data = await Promise.all([contract.totalSupply().call(), contract.balanceOf(BONDv3_ADDR).call(), contract.balanceOf(DAO_ADDR).call(), contract.balanceOf(ROUTER_ADDR).call()])
-    setTotalSupply(data[0])
-    let removeSupply = bn(data[1]).plus(bn(data[2])).plus(bn(data[3]))
-    let removeSupplyA = await getLockedBondLP()
-    setCircSupply(bn(data[0]).minus(bn(removeSupply)).minus(bn(removeSupplyA)))
-    await pause(5000)
-    getTotalSupply()
-  }
+  // const [totalSupply, setTotalSupply] = useState('')
+  // const [circSupply, setCircSupply] = useState('')
+  // const getTotalSupply = async () => {
+  //   let contract = getSpartaContract()
+  //   contract = contract.methods
+  //   let data = await Promise.all([contract.totalSupply().call(), contract.balanceOf(BONDv3_ADDR).call(), contract.balanceOf(DAO_ADDR).call(), contract.balanceOf(ROUTER_ADDR).call()])
+  //   setTotalSupply(data[0])
+  //   let removeSupply = bn(data[1]).plus(bn(data[2])).plus(bn(data[3]))
+  //   let removeSupplyA = await getLockedBondLP()
+  //   setCircSupply(bn(data[0]).minus(bn(removeSupply)).minus(bn(removeSupplyA)))
+  //   await pause(5000)
+  //   getTotalSupply()
+  // }
 
   const getLockedBondLP = async () => {
     // BNB:SPARTA Sum
@@ -120,10 +120,10 @@ const Header = (props) => {
                         <img src='/logo192.png' alt="" height='28px' /><h5 className='d-inline block ml-2 align-middle'>${formatGranularUnits(context.spartanPrice)}</h5>
                       </DropdownToggle>
                       <DropdownMenu className='mt-3'>
-                        <DropdownItem disabled><i className='bx bx-coin text-success mr-1' />Total Supply: {formatAllUnits(convertFromWei(totalSupply))}</DropdownItem>
+                        {/* <DropdownItem disabled><i className='bx bx-coin text-success mr-1' />Total Supply: {formatAllUnits(convertFromWei(totalSupply))}</DropdownItem>
                         <DropdownItem disabled><i className='bx bx-refresh text-success mr-1' />Circulating: {formatAllUnits(convertFromWei(circSupply))}</DropdownItem>
                         <DropdownItem disabled><i className='bx bx-coin-stack text-success mr-1' />Max Supply: 300,000,000</DropdownItem>
-                        <DropdownItem disabled><i className='bx bxs-badge-dollar text-success mr-1' />Market Cap: ${formatAllUnits(convertFromWei(bn(circSupply).times(context.spartanPrice)))} </DropdownItem>
+                        <DropdownItem disabled><i className='bx bxs-badge-dollar text-success mr-1' />Market Cap: ${formatAllUnits(convertFromWei(bn(circSupply).times(context.spartanPrice)))} </DropdownItem> */}
                         <DropdownItem divider />
                         <DropdownItem disabled><div className='text-center'><i className='bx bx-edit text-success mr-1' />Contracts</div></DropdownItem>
                         <DropdownItem>
