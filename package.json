@@ -88,7 +88,8 @@
     "simplebar-react": "^2.1.0",
     "styled-components": "^5.0.1",
     "toastr": "^2.1.4",
-    "web3": "^1.2.9"
+    "web3": "^1.2.9",
+    "@material-ui/core": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

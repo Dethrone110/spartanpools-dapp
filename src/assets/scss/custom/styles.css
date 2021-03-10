@@ -13,3 +13,20 @@ html[data-theme='light'] .nav-tabs .nav-link.active, html[data-theme='light'] .n
     padding-right: 10px; /* 3 */
     padding-left:  10px; /* 3 */
 }
+.MuiPaper-root {
+    color: #ffffff !important;
+    background-color: #1f1f1f !important;
+}
+.MuiStepLabel-label.MuiStepLabel-active {
+    color: #f6f6f6 !important;
+    background-color: #1f1f1f !important;
+}
+.MuiStepLabel-label {
+    color: #6a7187 !important;
+}
+.MuiStepIcon-text {
+    fill: #fff !important;
+}
+.MuiStepIcon-root.MuiStepIcon-completed {
+    color: #4fbe33 !important;;
+}
