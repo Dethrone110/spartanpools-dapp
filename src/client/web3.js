@@ -12,7 +12,7 @@ import DAO from '../artifacts/Dao.json'
 import Bondv2 from '../artifacts/BondV2.json'
 import Bondv3 from '../artifacts/BondV3.json'
 
-const net = 'testnet';
+const net = '';
 
 // CURRENT CONTRACT ADDRESSES
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'

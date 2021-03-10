@@ -181,9 +181,7 @@ const EarnTable = (props) => {
 
                                         <thead className="center">
                                         <tr>
-                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Icon")}</th>
                                             <th scope="col">{props.t("Symbol")}</th>
-                                            <th className="d-none d-lg-table-cell" scope="col">{props.t("Unlocked")}</th>
                                             <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
                                             <th scope="col">{props.t("Action")}</th>
                                         </tr>
@@ -192,11 +190,8 @@ const EarnTable = (props) => {
                                             {context.sharesData.filter(x => x.units + x.locked > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
                                                 <EarnTableItem 
                                                     key={c.address}
-                                                    symbAddr={c.address}
                                                     address={c.poolAddress}
                                                     symbol={c.symbol}
-                                                    units={c.units}
-                                                    locked={c.locked}
                                                     member={member}
                                                     harvest={harvest}
                                                     loadingHarvest={loadingHarvest}

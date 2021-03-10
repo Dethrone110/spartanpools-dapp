@@ -181,13 +181,8 @@ export const EarnTableItem = (props) => {
                 <td className="d-none d-lg-table-cell">
                     <TokenIcon address={props.symbAddr}/>
                 </td>
-                <td>
-                    <div className='d-block d-lg-none'><TokenIcon address={props.symbAddr}/></div>
-                    {props.symbol}
-                </td>
-                <td className="d-none d-lg-table-cell">
-                    {formatAllUnits(convertFromWei(props.units))}
-                </td>
+
+            
                 <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.locked))}
                     <Progress multi className="m-1 my-2">
