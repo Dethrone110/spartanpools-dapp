@@ -147,8 +147,7 @@ const UpgradeComponent = (props) => {
                     <div key={0} className="table-responsive">
                         
                         <CardSubtitle className="mb-3">
-                            Unlock your DAO weighting to join the new DAO Sheild Wall<br/>
-                            
+                            <br/>Unlock your LP tokens from the DAO to join the new Shield Wall!<br/>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
 
@@ -225,7 +224,7 @@ const UpgradeComponent = (props) => {
                                             <Step key={index}>
                                                 <StepLabel>{label}</StepLabel>
                                                 <StepContent>
-                                                    <Typography>{getStepContent(index)}</Typography>
+                                                    {getStepContent(index)}
                                                     <div className="m-2">
                                                         <div>
                                                             <Button
