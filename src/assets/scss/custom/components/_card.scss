@@ -2,6 +2,10 @@
 // _card.scss
 // 
 
+.MuiPaper-root-5 {
+  background-color: $footer-bg!important;
+}
+
 .card {
   margin-bottom: $grid-gutter-width;
   box-shadow: $box-shadow;
