@@ -28,6 +28,7 @@ import { Doughnut } from 'react-chartjs-2';
 import { withNamespaces } from 'react-i18next'
 import { withRouter, Link } from "react-router-dom"
 import EarnTableItem from "./EarnTableItem"
+import LPTableItem from "./LPTableItem"
 
 const UpgradeComponent = (props) => {
 
@@ -147,13 +148,13 @@ const UpgradeComponent = (props) => {
                     <div key={0} className="table-responsive">
                         
                         <CardSubtitle className="mb-3">
-                            <br/>Unlock your LP tokens from the DAO to join the new Shield Wall!<br/>
+                            <br/>Unlock your LP tokens from the DAO to join the new Spartan Shield Wall!<br/>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
 
                             <thead className="center">
                             <tr>
-                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Icon")}</th>
+                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
                                 <th scope="col">{props.t("Action")}</th>
                             </tr>
@@ -177,6 +178,8 @@ const UpgradeComponent = (props) => {
                                     <td colSpan="5">
                                         {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
                                             <div className="text-center m-2">All Locked LP Tokens Loaded</div>
+                                        }{context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length <= 0 &&
+                                            <div className="text-center m-2">You have no LP tokens, <Link to="/pools">visit the pools</Link> to add liquidity</div>
                                         }
                                     </td>
                                 </tr>
@@ -186,11 +189,46 @@ const UpgradeComponent = (props) => {
                 
         ;
             case 1:
-                return <Row>
-                <Col sm="2">
-                  <PoolShareTable />
-                </Col>
-              </Row>;
+                return  context.sharesData &&
+                <div key={0} className="table-responsive">
+                        
+                <CardSubtitle className="m-3">
+                    <br/>Migrate your pool liquidity into the new Spartan Pools to earn fees/Dividends<br/>
+                </CardSubtitle>
+                <Table className="table-centered mb-0">
+
+                    <thead className="center">
+                    <tr>
+                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
+                        <th className="d-none d-lg-table-cell" scope="col">{props.t("LP Tokens")}</th>
+                        <th scope="col">{props.t("Action")}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                            <LPTableItem 
+                                key={c.address}
+                                symbAddr={c.address}
+                                address={c.poolAddress}
+                                symbol={c.symbol}
+                                member={member}
+                                units={c.units}
+                            />
+                    )}
+                        <tr>
+                            <td colSpan="5">
+                            {context.sharesData === true &&
+                             <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                            }
+                            {context.sharesData !== true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
+                                    <div className="text-center m-2">Loaded all wallet LP tokens</div>
+                            }
+                            </td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
             case 2:
                 return `Migrate your bonded lps`;
         }
@@ -215,14 +253,18 @@ const UpgradeComponent = (props) => {
         <>
             <Card >
                 <Row >
-                     <Col sm={10} className="mr-20">
+                     <Col sm={12} className="mr-20">
                                 <div>
                                     <h1 className="text-center m-2 ">Spartan Protocol Migration</h1>
                                     
                                     <Stepper className ="m-2"activeStep={activeStep} orientation="vertical">
                                         {steps.map((label, index) => (
                                             <Step key={index}>
+
                                                 <StepLabel>{label}</StepLabel>
+                                                {!context.sharesData &&
+                                   <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                     }
                                                 <StepContent>
                                                     {getStepContent(index)}
                                                     <div className="m-2">
@@ -266,191 +308,3 @@ const UpgradeComponent = (props) => {
 };
 
 export default withRouter(withNamespaces()(UpgradeComponent));
-export const PoolShareTable = () => {
-
-    const context = useContext(Context)
-  
-    //useEffect(() => {
-      //console.log(context.sharesData)
-      // getPoolSharess()
-      // console.log(context.stakes)
-      // eslint-disable-next-line
-    //}, [])
-  
-    return (
-      <>
-        <div>
-          <Row>
-            <Col>
-              {!context.sharesData &&
-                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-              }
-              {context.sharesData &&
-                <Table className="text-center">
-                  <tbody>                  
-                    {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                      <PoolItem 
-                        key={c.address}
-                        symbol={c.symbol}
-                        address={c.address}
-                        units={c.units}
-                        locked={c.locked}
-                      />
-                    )}
-                    <tr>
-                        <td colSpan="5">
-                            {context.sharesDataLoading === true &&
-                                <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                            }
-                            {context.sharesDataLoading !== true && context.sharesDataComplete === true &&
-                                <div className="text-center m-2">All Pool LP Tokens Loaded</div>
-                            }
-                        </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              }
-            </Col>
-          </Row>
-        </div>
-      </>
-    )
-  }
-  
-
-export const PoolItem = (props) => {
-
-    const units = new BigNumber(props.units)
-    const locked = new BigNumber(props.locked)
-    const total = units.plus(locked)
-    //const lockedPC = locked.dividedBy(total).times(100).toFixed(0)
-    var symbol = props.symbol
-    symbol = symbol.substring(symbol.indexOf("-") + 1)
-    
-    const donutData = {
-      labels: [
-        "Available",
-        "Locked"
-      ],
-      datasets: [
-        {
-          data: [convertFromWei(units).toFixed(2), convertFromWei(locked).toFixed(2)],
-          backgroundColor: [
-            "#a80005",
-            "#556ee6"
-          ],
-          hoverBackgroundColor: [
-            "#a80005",
-            "#556ee6"
-          ],
-          borderWidth:1,
-          borderColor:'#121212',
-          hoverBorderColor: "#fff"
-        }
-      ]
-    }
-    
-    const donutOptions = {
-      legend: {
-          display: false,
-      },
-      cutoutPercentage:60,
-      tooltips: {
-        // Disable the on-canvas tooltip
-        enabled: false,
-    
-        custom: function(tooltipModel) {
-            // Tooltip Element
-            var tooltipEl = document.getElementById('chartjs-tooltip');
-    
-            // Create element on first render
-            if (!tooltipEl) {
-                tooltipEl = document.createElement('div');
-                tooltipEl.id = 'chartjs-tooltip';
-                tooltipEl.innerHTML = '<table></table>';
-                document.body.appendChild(tooltipEl);
-            }
-    
-            // Hide if no tooltip
-            if (tooltipModel.opacity === 0) {
-                tooltipEl.style.opacity = 0;
-                return;
-            }
-    
-            // Set caret Position
-            tooltipEl.classList.remove('above', 'below', 'no-transform');
-            if (tooltipModel.yAlign) {
-                tooltipEl.classList.add(tooltipModel.yAlign);
-            } else {
-                tooltipEl.classList.add('no-transform');
-            }
-    
-            function getBody(bodyItem) {
-                return bodyItem.lines;
-            }
-    
-            // Set Text
-            if (tooltipModel.body) {
-                var titleLines = tooltipModel.title || [];
-                var bodyLines = tooltipModel.body.map(getBody);
-    
-                var innerHtml = '<thead>';
-    
-                titleLines.forEach(function(title) {
-                    innerHtml += '<tr><th>' + title + '</th></tr>';
-                });
-                innerHtml += '</thead><tbody>';
-    
-                bodyLines.forEach(function(body, i) {
-                    var colors = tooltipModel.labelColors[i];
-                    var style = 'background:' + colors.backgroundColor;
-                    style += '; border-color:' + colors.borderColor;
-                    style += '; border-width: 2px';
-                    var span = '<span style="' + style + '"></span>';
-                    innerHtml += '<tr><td>' + span + body + '</td></tr>';
-                });
-                innerHtml += '</tbody>';
-    
-                var tableRoot = tooltipEl.querySelector('table');
-                tableRoot.innerHTML = innerHtml;
-            }
-    
-            // `this` will be the overall tooltip
-            var position = this._chart.canvas.getBoundingClientRect();
-    
-            // Display, position, and set styles for font
-            tooltipEl.style.opacity = 1;
-            tooltipEl.style.position = 'absolute';
-            tooltipEl.style.left = position.left + window.pageXOffset - 20 + tooltipModel.caretX + 'px';
-            tooltipEl.style.top = position.top + window.pageYOffset - 20 + tooltipModel.caretY + 'px';
-            tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
-            tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
-            tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
-            tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
-            tooltipEl.style.pointerEvents = 'none';
-            tooltipEl.style.zIndex = '10000';
-            tooltipEl.style.background = 'rgba(0, 0, 0, .7)';
-            tooltipEl.style.color = '#fff';
-            tooltipEl.style.borderRadius = '3px';
-        }
-      }
-    }
-   
-      return (
-        <>
-          <tr>
-            <td className="align-middle w-50 p-4" style={{position:'relative'}}>
-              <Doughnut width={68} height={68} data={donutData} options={donutOptions}/>
-              
-              <TokenIconChart address={props.address}/>
-            </td>
-            <td className="align-middle w-50 p-1">
-              <h6>{symbol}:SPARTA</h6>
-              <p className='m-2 font-size-12'>({props.symbol})</p>
-              <h5 className='m-2'>{formatAllUnits(convertFromWei(total))}</h5>
-            </td>
-          </tr>
-        </>
-      )
-    
-    }

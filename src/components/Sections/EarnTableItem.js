@@ -177,12 +177,14 @@ export const EarnTableItem = (props) => {
 
     return (
         <>
+        {props.locked > 0 &&
             <tr>
+            
                 <td className="d-none d-lg-table-cell">
                     <TokenIcon address={props.symbAddr}/>
                 </td>
-
-            
+                
+           
                 <td className="d-none d-lg-table-cell">
                     {formatAllUnits(convertFromWei(props.locked))}
                     <Progress multi className="m-1 my-2">
@@ -190,26 +192,18 @@ export const EarnTableItem = (props) => {
                         <Progress bar color="danger" value={convertFromWei(units).toFixed(2)} max={convertFromWei(total).toFixed(2)}></Progress>
                     </Progress>
                 </td>
+                
                 <td>
-                    {props.units > 0 &&
-                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleLock()}>
-                            <i className="bx bx-lock font-size-16 align-middle"/> Lock
+                  
+                        <button type="button" className="btn btn-green waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock()}>
+                            <i className="bx bx-lock-open font-size-15 align-middle"/> Unlock {props.symbol} from old DAO
                         </button>
-                    }
-                    {props.locked > 0 &&
-                        <button type="button" className="btn btn-primary waves-effect waves-light m-1 w-75" onClick={()=>toggleUnlock()}>
-                            <i className="bx bx-lock-open font-size-16 align-middle"/> Unlock
-                        </button>
-                    }
+                    
                     <Notification type={notifyType} message={notifyMessage}/>
 
                     <Modal isOpen={showLockModal} toggle={()=>toggleLock()}>
                         <ModalHeader toggle={()=>toggleLock()}>
-                            {isMember === false &&
-                                <>
-                                    You are locking your tokens!
-                                </>
-                            }
+                            
                             {isMember === true && props.lastHarvest <= 6 &&
                                 <>
                                     You are locking your tokens!
@@ -361,6 +355,7 @@ export const EarnTableItem = (props) => {
                     </Modal>
                 </td>
             </tr>
+}
         </>
 )
 };
