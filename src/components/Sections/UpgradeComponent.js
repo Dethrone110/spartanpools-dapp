@@ -51,7 +51,7 @@ const UpgradeComponent = (props) => {
             if (context.account && context.walletData) {
                 getData()
             }
-        }, 3000);
+        }, 5000);
         return () => clearInterval(interval)
         // eslint-disable-next-line
     }, [context.walletData, context.account])
