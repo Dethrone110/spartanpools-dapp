@@ -110,7 +110,7 @@ const Header = (props) => {
                   >
                     <i className="fa fa-fw fa-bars"/>
                   </button>
-                  <ThemeSwitch />
+                 
                 </Col>
 
                 <Col xs={6} className="px-1 text-right">

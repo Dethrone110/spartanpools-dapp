@@ -29,6 +29,8 @@ import { withNamespaces } from 'react-i18next'
 import { withRouter, Link } from "react-router-dom"
 import EarnTableItem from "./EarnTableItem"
 import LPTableItem from "./LPTableItem"
+import Bondv2TableItem from "./Bondv2TableItem"
+import Bondv3TableItem from "./Bondv3TableItem"
 
 const UpgradeComponent = (props) => {
 
@@ -36,7 +38,10 @@ const UpgradeComponent = (props) => {
     const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
     function getSteps() {
-        return [<CardTitle className="mt-2"><h4>DAO Migration</h4></CardTitle>, <CardTitle className="mt-2"><h4>Pool Liquidity Migration</h4></CardTitle>, <CardTitle className="mt-2"><h4>Bonded Assets Migration</h4></CardTitle>];
+        return [<CardTitle className="mt-2"><h4>DAO Migration</h4></CardTitle>,
+         <CardTitle className="mt-2"><h4>Pool Liquidity Migration</h4></CardTitle>, 
+        <CardTitle className="mt-2"><h4>Bondv2 Migration</h4></CardTitle>,
+        <CardTitle className="mt-2"><h4>Bondv3 Migration</h4></CardTitle>];
     }
   
     const [reward, setReward] = useState(0)
@@ -168,7 +173,6 @@ const UpgradeComponent = (props) => {
                                         symbol={c.symbol}
                                         units={c.units}
                                         locked={c.locked}
-                                        member={member}
                                         harvest={harvest}
                                         loadingHarvest={loadingHarvest}
                                         lastHarvest={lastHarvest}
@@ -193,7 +197,7 @@ const UpgradeComponent = (props) => {
                 <div key={0} className="table-responsive">
                         
                 <CardSubtitle className="m-3">
-                    <br/>Migrate your pool liquidity into the new Spartan Pools to earn fees/Dividends<br/>
+                    <br/>Migrate your pool liquidity into the new Spartan Pools to earn Fees/Dividends<br/>
                 </CardSubtitle>
                 <Table className="table-centered mb-0">
 
@@ -212,7 +216,7 @@ const UpgradeComponent = (props) => {
                                 symbAddr={c.address}
                                 address={c.poolAddress}
                                 symbol={c.symbol}
-                                member={member}
+                                
                                 units={c.units}
                             />
                     )}
@@ -230,7 +234,93 @@ const UpgradeComponent = (props) => {
                 </Table>
             </div>
             case 2:
-                return `Migrate your bonded lps`;
+                        return  context.sharesData &&
+                        <div key={0} className="table-responsive">
+                        
+                <CardSubtitle className="m-3">
+                    <br/>Migrate your bondv2 assets into the new Spartan Pools to earn Fees/Dividends<br/>
+                </CardSubtitle>
+                <Table className="table-centered mb-0">
+
+                    <thead className="center">
+                    <tr>
+                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
+                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Bonded LP Tokens")}</th>
+                        <th scope="col">{props.t("Action")}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                            <Bondv2TableItem 
+                                key={c.address}
+                                symbAddr={c.address}
+                                address={c.poolAddress}
+                                symbol={c.symbol}
+                                bondedv2LP={c.bondedv2LP}
+                                bondv2Member={c.bondv2Member}
+                            />
+                    )}
+                        <tr>
+                            <td colSpan="5">
+                            {context.sharesData === true &&
+                             <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                            }
+                            {context.sharesData !== true && context.sharesData.filter(x => x.bondv2Member == true).length > 0 &&
+                                    <div className="text-center m-2">Loaded all wallet LP tokens</div>
+                            }
+                            </td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
+                
+             case 3:
+                 if(context.sharesData &&
+                    context.sharesData.filter(x => x.bondv3Member == true).length > 0){
+                        return  context.sharesData &&
+                        context.sharesData.filter(x => x.bondv3Member == true).length > 0 &&
+                        <div key={0} className="table-responsive">
+                                
+                        <CardSubtitle className="m-3">
+                            <br/>Migrate your bondv3 assets into the new Spartan Pools to earn Fees/Dividends<br/>
+                        </CardSubtitle>
+                        <Table className="table-centered mb-0">
+        
+                            <thead className="center">
+                            <tr>
+                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
+                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Bonded LP Tokens")}</th>
+                                <th scope="col">{props.t("Action")}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+        
+                            {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                    <Bondv3TableItem 
+                                        key={c.address}
+                                        symbAddr={c.address}
+                                        address={c.poolAddress}
+                                        symbol={c.symbol}
+                                        bondedv3LP={c.bondedv3LP}
+                                        bondv3Member={c.bondv3Member}
+                                    />
+                            )}
+                                <tr>
+                                    <td colSpan="5">
+                                    {context.sharesData === true &&
+                                     <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                    }
+                                    {context.sharesData !== true && context.sharesData.filter(x => x.bondv3Member == true).length > 0 &&
+                                            <div className="text-center m-2">Loaded all wallet LP tokens</div>
+                                    }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+                    }
+               
         }
     }
 
@@ -256,15 +346,17 @@ const UpgradeComponent = (props) => {
                      <Col sm={12} className="mr-20">
                                 <div>
                                     <h1 className="text-center m-2 ">Spartan Protocol Migration</h1>
-                                    
+                                    {context.walletDataLoading == true &&
+                                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                                 }
+                                   {context.walletDataLoading !== true &&
                                     <Stepper className ="m-2"activeStep={activeStep} orientation="vertical">
+
                                         {steps.map((label, index) => (
                                             <Step key={index}>
-
+                                                
                                                 <StepLabel>{label}</StepLabel>
-                                                {!context.sharesData &&
-                                   <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                     }
+                                                
                                                 <StepContent>
                                                     {getStepContent(index)}
                                                     <div className="m-2">
@@ -280,7 +372,7 @@ const UpgradeComponent = (props) => {
                                                                 onClick={handleNext}
                                                                 className={"m-2"}
                                                             >
-                                                                {activeStep === steps.length - 1 ? 'Finish' : 'Complete Step'}
+                                                                {activeStep === steps.length - 1 ? 'Finish' : 'Completed'}
                                                             </Button>
                                                         </div>
                                                     </div>
@@ -288,11 +380,13 @@ const UpgradeComponent = (props) => {
                                             </Step>
                                         ))}
                                     </Stepper>
+}
+                                    
                                     {activeStep === steps.length && (
                                         <Paper square elevation={0} className="p-3">
                                             <Typography>All steps completed - you&apos;re finished :P</Typography>
-                                            <Button onClick={'/'} color="primary" className={"m-2"}>
-                                               Lets Go - DappV2!
+                                            <Button href={'https://spartanprotocol.org/'} color="primary" className={"m-2"}>
+                                               Lets Go SPARTAAA DappV2!
                                           </Button>
                                         </Paper>
                                     )}

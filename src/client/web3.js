@@ -674,10 +674,12 @@ export const getPoolShares = async (member, token) => {
     let memberData = data[0]
     let poolAddress = data[1]
 
-    let extraData = await Promise.all([contract.methods.getTokenDetails(poolAddress).call(), getTokenContract(poolAddress).methods.balanceOf(member).call(), getDaoContract().methods.mapMemberPool_balance(member, poolAddress).call()])
+    let extraData = await Promise.all([contract.methods.getTokenDetails(poolAddress).call(), getTokenContract(poolAddress).methods.balanceOf(member).call(), getDaoContract().methods.mapMemberPool_balance(member, poolAddress).call(), getBondv2Contract().methods.getMemberDetails(member, token).call(),getBondv3Contract().methods.getMemberDetails(member, token).call()])
     let tokenDetails = extraData[0]
     let liquidityUnits = extraData[1]
     let locked = extraData[2]
+    let bondv2 = extraData[3]
+    let bondv3 = extraData[4]
     let share = {
         'symbol': tokenDetails.symbol,
         'name': tokenDetails.name,
@@ -686,6 +688,10 @@ export const getPoolShares = async (member, token) => {
         'baseAmount': memberData.baseAmount,
         'tokenAmount': memberData.tokenAmount,
         'locked': locked,
+        'bondv2Member': bondv2.isMember,
+        'bondedv2LP': bondv2.bondedLP,
+        'bondv3Member': bondv3.isMember,
+        'bondedv3LP': bondv3.bondedLP,
         'units': liquidityUnits,
         'share': bn(liquidityUnits).div(bn(tokenDetails.totalSupply)).toFixed(0)
     }
