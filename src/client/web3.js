@@ -213,9 +213,14 @@ export const getEligibleAssets = async (address, assetDetailsArray) => {
 
 export const getListedTokens = async () => {
     console.log('start getlistedtokens')
-    var contract = getUtilsContract()
-    let tokenArray = await contract.methods.allTokens().call()
-    //console.log(tokenArray)
+    var contract = getRouterContract()
+    const tokenCount = await contract.methods.tokenCount().call()
+    console.log(tokenCount)
+    let tokenArray = []
+    for (let i = 0; i < tokenCount; i++) {
+        tokenArray.push(await contract.methods.getToken(i).call())
+    }
+    console.log('tokenCount', tokenCount, 'tokenArray', tokenArray)
     return tokenArray
 }
 
@@ -595,20 +600,20 @@ export const filterTokensNotPoolSelection = async (address, poolsData, walletDat
 }
 
 // Load Initial Shares Data (Wallet Drawer & Earn Page)
-export const getSharesData = async (member, poolArray) => {
+export const getSharesData = async (member, tokenArray) => {
     console.log('start getSharesData')
     let results = 0
     const pagination = 3
     //console.log(poolArray)
-    if (poolArray.length > pagination) {
+    if (tokenArray.length > pagination) {
         results = pagination
     }
     else {
-        results = poolArray.length
+        results = tokenArray.length
     }
     let sharesData = []
     for (let i = 0; i < results; i++) {
-        let stakesItem = await getPoolShares(member, poolArray[i])
+        let stakesItem = await getPoolShares(member, tokenArray[i])
         //if (stakesItem.locked + stakesItem.units > 0) {
         sharesData.push(stakesItem)
         //}
@@ -668,34 +673,35 @@ export const updateSharesData = async (member, prevSharesData, tokenAddr) => {
 }
 
 export const getPoolShares = async (member, token) => {
-    var contract = getUtilsContract()
+    const contract = getRouterContract()
 
-    let data = await Promise.all([contract.methods.getMemberShare(token, member).call(), contract.methods.getPool(token).call()])
-    let memberData = data[0]
-    let poolAddress = data[1]
+    let data = await Promise.all([contract.methods.getPool(token).call(), getTokenName(token), getTokenSymbol(token)])
+    const poolAddress = data[0]
+    const tokenName = data[1]
+    const tokenSymbol = data[2]
 
-    let extraData = await Promise.all([contract.methods.getTokenDetails(poolAddress).call(), getTokenContract(poolAddress).methods.balanceOf(member).call(), getDaoContract().methods.mapMemberPool_balance(member, poolAddress).call(), getBondv2Contract().methods.getMemberDetails(member, token).call(),getBondv3Contract().methods.getMemberDetails(member, token).call()])
-    let tokenDetails = extraData[0]
-    let liquidityUnits = extraData[1]
-    let locked = extraData[2]
-    let bondv2 = extraData[3]
-    let bondv3 = extraData[4]
+    let extraData = await Promise.all([getTokenContract(poolAddress).methods.balanceOf(member).call(), getDaoContract().methods.mapMemberPool_balance(member, poolAddress).call(), getBondv2Contract().methods.getMemberDetails(member, token).call(),getBondv3Contract().methods.getMemberDetails(member, token).call()])
+    // let tokenDetails = extraData[0]
+    let liquidityUnits = extraData[0]
+    let locked = extraData[1]
+    let bondv2 = extraData[2]
+    let bondv3 = extraData[3]
     let share = {
-        'symbol': tokenDetails.symbol,
-        'name': tokenDetails.name,
+        'symbol': tokenSymbol,
+        'name': tokenName,
         'address': token,
         'poolAddress': poolAddress,
-        'baseAmount': memberData.baseAmount,
-        'tokenAmount': memberData.tokenAmount,
+        // 'baseAmount': memberData.baseAmount,
+        // 'tokenAmount': memberData.tokenAmount,
         'locked': locked,
         'bondv2Member': bondv2.isMember,
         'bondedv2LP': bondv2.bondedLP,
         'bondv3Member': bondv3.isMember,
         'bondedv3LP': bondv3.bondedLP,
         'units': liquidityUnits,
-        'share': bn(liquidityUnits).div(bn(tokenDetails.totalSupply)).toFixed(0)
+        // 'share': bn(liquidityUnits).div(bn(tokenDetails.totalSupply)).toFixed(0)
     }
-    //console.log(share)
+    console.log(share)
     return share
 }
 

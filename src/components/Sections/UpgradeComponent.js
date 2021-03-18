@@ -63,8 +63,11 @@ const UpgradeComponent = (props) => {
     const getData = async () => {
         let data = await Promise.all([getRewards(context.account), getMemberDetail(context.account), getTotalWeight()])
         let rewards = data[0]
+        console.log(rewards)
         let memberDetails = data[1]
+        console.log(memberDetails)
         let weight = data[2]
+        console.log(weight)
         setReward(rewards)
         setMember(memberDetails)
         setTotalWeight(weight)
