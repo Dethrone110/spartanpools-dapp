@@ -212,7 +212,7 @@ const UpgradeComponent = (props) => {
                             Migrate your pooled liquidity into the new Spartan Pools to resume earning Fees + Dividends<br/>
                             For each liquidity pool; there will be two transactions:
                             <li>1. Allow the migration contract to interact with your LP tokens</li>
-                            <li>2. Send your LP tokens through to the new SpartanProtocol Pools V2</li>
+                            <li>2. Migrate your LP tokens through to the new SpartanProtocol Pools V2</li>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
 
@@ -268,7 +268,7 @@ const UpgradeComponent = (props) => {
                     context.sharesData.filter(x => x.bondedv2LP > 0).length > 0 &&
                     <>
                         <CardSubtitle className="m-3">
-                            <br/>Migrate your bondv2 assets into the new Spartan Pools to earn Fees/Dividends<br/>
+                            Migrate your Bondv2 LP tokens into the new Spartan Pools to resume earning Fees + Dividends<br/>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
 
@@ -294,10 +294,10 @@ const UpgradeComponent = (props) => {
                                 <tr>
                                     <td colSpan="5">
                                     {context.sharesData === true &&
-                                    <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                     }
                                     {context.sharesData !== true && context.sharesData.filter(x => x.bondv2Member === true).length > 0 &&
-                                            <div className="text-center m-2">Loaded all wallet LP tokens</div>
+                                        <div className="text-center m-2">Loaded all wallet LP tokens</div>
                                     }
                                     </td>
                                 </tr>
