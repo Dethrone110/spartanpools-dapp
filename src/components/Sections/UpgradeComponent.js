@@ -8,12 +8,10 @@ import Notification from '../Common/notification'
 
 import { bn, hoursSince } from '../../utils'
 import "../../assets/scss/custom/components/_rightbar.scss";
-import BigNumber from 'bignumber.js';
 import {
     Row, Col, Card, CardTitle, Table, CardSubtitle,
-    Spinner, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, Progress
+    Button
 } from "reactstrap"
-import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -21,8 +19,6 @@ import StepContent from '@material-ui/core/StepContent';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import { TokenIconChart } from '../Common/TokenIconChart'
-import { Doughnut } from 'react-chartjs-2';
 import { withNamespaces } from 'react-i18next'
 import { withRouter, Link } from "react-router-dom"
 import EarnTableItem from "./EarnTableItem"
@@ -150,145 +146,128 @@ const UpgradeComponent = (props) => {
     function getStepContent(step) {
         switch (step) {
             case 0:
-                return  context.sharesData &&
+                return context.sharesData &&
                     <div key={0} className="table-responsive">
                         
-                        <CardSubtitle className="mb-3">
-                            <br/>Unlock your LP tokens from the DAO to join the new Spartan Shield Wall!<br/>
+                        {context.sharesData.filter(x => x.locked > 0).length > 0 &&
+                            <>
+                                <CardSubtitle className="mb-3">
+                                    <br/>Unlock your LP tokens from the DAO to join the new Spartan Shield Wall!<br/>
+                                </CardSubtitle>
+
+                                <Table className="table-centered mb-0">
+
+                                    <thead className="center">
+                                    <tr>
+                                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
+                                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
+                                        <th scope="col">{props.t("Action")}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {context.sharesData.filter(x => x.units + x.locked > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                            <EarnTableItem 
+                                                key={c.address}
+                                                symbAddr={c.address}
+                                                address={c.poolAddress}
+                                                symbol={c.symbol}
+                                                units={c.units}
+                                                member={member}
+                                                locked={c.locked}
+                                                harvest={harvest}
+                                                loadingHarvest={loadingHarvest}
+                                                lastHarvest={lastHarvest}
+                                            />
+                                        )}
+                                        <tr>
+                                            <td colSpan="5">
+                                                {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
+                                                    <div className="text-center m-2">All Locked LP Tokens Loaded</div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </>
+                        }
+                        {context.sharesData.filter(x => x.locked > 0).length === 0 &&
+                            <>
+                                <h3>You have no LP tokens locked in the DAO</h3>
+                                <h3>Click 'Next Step' to proceed with migration</h3>
+                                <h4>Skipping steps may result in loss of funds:</h4>
+                                <h4>Take your time and follow the steps in order!</h4>
+                            </>
+                        }
+                    </div>
+                
+        ;
+            case 1:
+                return context.sharesData &&
+                <div key={0} className="table-responsive">
+
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length > 0 &&   
+                    <>
+                        <CardSubtitle className="m-3">
+                            <br/>Migrate your pool liquidity into the new Spartan Pools to earn Fees/Dividends<br/>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
 
                             <thead className="center">
                             <tr>
                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
-                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Locked")}</th>
+                                <th className="d-none d-lg-table-cell" scope="col">{props.t("LP Tokens")}</th>
                                 <th scope="col">{props.t("Action")}</th>
                             </tr>
                             </thead>
                             <tbody>
-                                {context.sharesData.filter(x => x.units + x.locked > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                                    <EarnTableItem 
+
+                            {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                    <LPTableItem 
                                         key={c.address}
                                         symbAddr={c.address}
                                         address={c.poolAddress}
                                         symbol={c.symbol}
+                                        
                                         units={c.units}
-                                        member={member}
-                                        locked={c.locked}
-                                        harvest={harvest}
-                                        loadingHarvest={loadingHarvest}
-                                        lastHarvest={lastHarvest}
                                     />
-                                )}
+                            )}
                                 <tr>
                                     <td colSpan="5">
-                                        {context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
-                                            <div className="text-center m-2">All Locked LP Tokens Loaded</div>
-                                        }{context.sharesDataLoading !== true && context.sharesDataComplete === true && context.sharesData.filter(x => x.units + x.locked > 0).length <= 0 &&
-                                            <div className="text-center m-2">You have no LP tokens, <Link to="/pools">visit the pools</Link> to add liquidity</div>
-                                        }
+                                    {context.sharesData === true &&
+                                    <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                    }
+                                    {context.sharesData !== true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
+                                            <div className="text-center m-2">Loaded all wallet LP tokens</div>
+                                    }
                                     </td>
                                 </tr>
                             </tbody>
                         </Table>
-                    </div>
-                
-        ;
-            case 1:
-                return  context.sharesData &&
-                <div key={0} className="table-responsive">
-                        
-                <CardSubtitle className="m-3">
-                    <br/>Migrate your pool liquidity into the new Spartan Pools to earn Fees/Dividends<br/>
-                </CardSubtitle>
-                <Table className="table-centered mb-0">
-
-                    <thead className="center">
-                    <tr>
-                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
-                        <th className="d-none d-lg-table-cell" scope="col">{props.t("LP Tokens")}</th>
-                        <th scope="col">{props.t("Action")}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                            <LPTableItem 
-                                key={c.address}
-                                symbAddr={c.address}
-                                address={c.poolAddress}
-                                symbol={c.symbol}
-                                
-                                units={c.units}
-                            />
-                    )}
-                        <tr>
-                            <td colSpan="5">
-                            {context.sharesData === true &&
-                             <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                            }
-                            {context.sharesData !== true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
-                                    <div className="text-center m-2">Loaded all wallet LP tokens</div>
-                            }
-                            </td>
-                        </tr>
-                    </tbody>
-                </Table>
+                    </>
+                }
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 &&   
+                    <>
+                        <h3>You have no LP tokens in your wallet</h3>
+                        <h3>Click 'Next Step' to proceed with migration</h3>
+                        <h4>Skipping steps may result in loss of funds:</h4>
+                        <h4>Take your time and follow the steps in order!</h4>
+                    </>
+                }
             </div>
             case 2:
-                        return  context.sharesData &&
+                        return context.sharesData &&
                         <div key={0} className="table-responsive">
-                        
-                <CardSubtitle className="m-3">
-                    <br/>Migrate your bondv2 assets into the new Spartan Pools to earn Fees/Dividends<br/>
-                </CardSubtitle>
-                <Table className="table-centered mb-0">
 
-                    <thead className="center">
-                    <tr>
-                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
-                        <th className="d-none d-lg-table-cell" scope="col">{props.t("Bonded LP Tokens")}</th>
-                        <th scope="col">{props.t("Action")}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
 
-                    {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                            <Bondv2TableItem 
-                                key={c.address}
-                                symbAddr={c.address}
-                                address={c.poolAddress}
-                                symbol={c.symbol}
-                                bondedv2LP={c.bondedv2LP}
-                                bondv2Member={c.bondv2Member}
-                            />
-                    )}
-                        <tr>
-                            <td colSpan="5">
-                            {context.sharesData === true &&
-                             <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                            }
-                            {context.sharesData !== true && context.sharesData.filter(x => x.bondv2Member === true).length > 0 &&
-                                    <div className="text-center m-2">Loaded all wallet LP tokens</div>
-                            }
-                            </td>
-                        </tr>
-                    </tbody>
-                </Table>
-            </div>
-                
-             case 3:
-                 if(context.sharesData &&
-                    context.sharesData.filter(x => x.bondv3Member === true).length > 0){
-                        return  context.sharesData &&
-                        context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
-                        <div key={0} className="table-responsive">
-                                
+                {context.sharesData?.filter(x => x.locked > 0).length === 0 &&
+                    context.sharesData.filter(x => x.units > 0).length === 0 &&
+                    context.sharesData.filter(x => x.bondedv2LP > 0).length > 0 &&
+                    <>
                         <CardSubtitle className="m-3">
-                            <br/>Migrate your bondv3 assets into the new Spartan Pools to earn Fees/Dividends<br/>
+                            <br/>Migrate your bondv2 assets into the new Spartan Pools to earn Fees/Dividends<br/>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
-        
+
                             <thead className="center">
                             <tr>
                                 <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
@@ -297,7 +276,74 @@ const UpgradeComponent = (props) => {
                             </tr>
                             </thead>
                             <tbody>
-        
+
+                            {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
+                                    <Bondv2TableItem 
+                                        key={c.address}
+                                        symbAddr={c.address}
+                                        address={c.poolAddress}
+                                        symbol={c.symbol}
+                                        bondedv2LP={c.bondedv2LP}
+                                        bondv2Member={c.bondv2Member}
+                                    />
+                            )}
+                                <tr>
+                                    <td colSpan="5">
+                                    {context.sharesData === true &&
+                                    <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                    }
+                                    {context.sharesData !== true && context.sharesData.filter(x => x.bondv2Member === true).length > 0 &&
+                                            <div className="text-center m-2">Loaded all wallet LP tokens</div>
+                                    }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </>
+                }
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length > 0 &&
+                    <>
+                        <h3>You have migrated all BondV2 allocations</h3>
+                        <h3>Click 'Next Step' to proceed with migration</h3>
+                        <h4>Skipping steps may result in loss of funds:</h4>
+                        <h4>Take your time and follow the steps in order!</h4>
+                    </>
+                }
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length === 0 &&
+                    <>
+                        <h3>This step is not relevant to your wallet</h3>
+                        <h3>Click 'Next Step' to proceed with migration</h3>
+                        <h4>Skipping steps may result in loss of funds:</h4>
+                        <h4>Take your time and follow the steps in order!</h4>
+                    </>
+                }
+                        
+            </div>
+                
+            case 3:
+
+                return  context.sharesData &&
+                <div key={0} className="table-responsive">
+
+                {context.sharesData?.filter(x => x.locked > 0).length === 0 &&
+                    context.sharesData.filter(x => x.units > 0).length === 0 &&
+                    context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
+                    context.sharesData.filter(x => x.bondedv3LP > 0).length > 0 &&
+                    <>                        
+                        <CardSubtitle className="m-3">
+                            <br/>Migrate your bondv3 assets into the new Spartan Pools to earn Fees/Dividends<br/>
+                        </CardSubtitle>
+                        <Table className="table-centered mb-0">
+
+                            <thead className="center">
+                            <tr>
+                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
+                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Bonded LP Tokens")}</th>
+                                <th scope="col">{props.t("Action")}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
                             {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
                                     <Bondv3TableItem 
                                         key={c.address}
@@ -311,7 +357,7 @@ const UpgradeComponent = (props) => {
                                 <tr>
                                     <td colSpan="5">
                                     {context.sharesData === true &&
-                                     <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                     }
                                     {context.sharesData !== true && context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
                                             <div className="text-center m-2">Loaded all wallet LP tokens</div>
@@ -320,9 +366,25 @@ const UpgradeComponent = (props) => {
                                 </tr>
                             </tbody>
                         </Table>
-                    </div>
-                    }
-               
+                    </>
+                }
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
+                    <>
+                        <h3>You have migrated all BondV3 allocations</h3>
+                        <h3>Click 'Next Step' to proceed with migration</h3>
+                        <h4>Skipping steps may result in loss of funds:</h4>
+                        <h4>Take your time and follow the steps in order!</h4>
+                    </>
+                }
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length === 0 &&
+                    <>
+                        <h3>This step is not relevant to your wallet</h3>
+                        <h3>Click 'Finish' to finalise migration</h3>
+                        <h4>This last 'Finish' step is critical! Do not skip!</h4>
+                    </>
+                }
+            </div>
+            // no default
         }
     }
 
@@ -368,14 +430,52 @@ const UpgradeComponent = (props) => {
                                                                 onClick={handleBack}
                                                                 className={"m-2"}
                                                             > Back </Button>
-                                                            <Button
-                                                                variant="contained"
-                                                                color="primary"
-                                                                onClick={handleNext}
-                                                                className={"m-2"}
-                                                            >
-                                                                {activeStep === steps.length - 1 ? 'Finish' : 'Completed'}
-                                                            </Button>
+                                                            {activeStep === 0 && context.sharesData?.filter(x => x.locked > 0).length === 0 && 
+                                                                <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={handleNext}
+                                                                    className={"m-2"}
+                                                                >
+                                                                    {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
+                                                                </Button>
+                                                            }
+                                                            {activeStep === 1 && context.sharesData?.filter(x => x.locked > 0).length === 0 &&
+                                                                context.sharesData.filter(x => x.units > 0).length === 0 &&
+                                                                <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={handleNext}
+                                                                    className={"m-2"}
+                                                                >
+                                                                    {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
+                                                                </Button>
+                                                            }
+                                                            {activeStep === 2 && context.sharesData?.filter(x => x.locked > 0).length === 0 &&
+                                                                context.sharesData.filter(x => x.units > 0).length === 0 &&
+                                                                context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
+                                                                <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={handleNext}
+                                                                    className={"m-2"}
+                                                                >
+                                                                    {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
+                                                                </Button>
+                                                            }
+                                                            {activeStep === 2 && context.sharesData?.filter(x => x.locked > 0).length === 0 &&
+                                                                context.sharesData.filter(x => x.units > 0).length === 0 &&
+                                                                context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
+                                                                context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 &&
+                                                                <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={handleNext}
+                                                                    className={"m-2"}
+                                                                >
+                                                                    {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
+                                                                </Button>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </StepContent>
