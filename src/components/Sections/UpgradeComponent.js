@@ -192,10 +192,11 @@ const UpgradeComponent = (props) => {
                         }
                         {context.sharesData.filter(x => x.locked > 0).length === 0 &&
                             <>
-                                <h3>You have no LP tokens locked in the DAO</h3>
-                                <h3>Click 'Next Step' to proceed with migration</h3>
-                                <h4>Skipping steps may result in loss of funds:</h4>
-                                <h4>Take your time and follow the steps in order!</h4>
+                                <h5>You have no LP tokens locked in the DAO</h5>
+                                <h5>Click 'Next Step' to proceed with migration</h5>
+                                <br/><br/>
+                                <h5>Skipping steps may result in loss of funds:</h5>
+                                <h5>Take your time and follow the steps in order!</h5>
                             </>
                         }
                     </div>
@@ -247,10 +248,11 @@ const UpgradeComponent = (props) => {
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 &&   
                     <>
-                        <h3>You have no LP tokens in your wallet</h3>
-                        <h3>Click 'Next Step' to proceed with migration</h3>
-                        <h4>Skipping steps may result in loss of funds:</h4>
-                        <h4>Take your time and follow the steps in order!</h4>
+                        <h5>You have no LP tokens in your wallet</h5>
+                        <h5>Click 'Next Step' to proceed with migration</h5>
+                        <br/><br/>
+                        <h5>Skipping steps may result in loss of funds:</h5>
+                        <h5>Take your time and follow the steps in order!</h5>
                     </>
                 }
             </div>
@@ -303,18 +305,20 @@ const UpgradeComponent = (props) => {
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length > 0 &&
                     <>
-                        <h3>You have migrated all BondV2 allocations</h3>
-                        <h3>Click 'Next Step' to proceed with migration</h3>
-                        <h4>Skipping steps may result in loss of funds:</h4>
-                        <h4>Take your time and follow the steps in order!</h4>
+                        <h5>You have migrated all BondV2 allocations</h5>
+                        <h5>Click 'Next Step' to proceed with migration</h5>
+                        <br/><br/>
+                        <h5>Skipping steps may result in loss of funds:</h5>
+                        <h5>Take your time and follow the steps in order!</h5>
                     </>
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length === 0 &&
                     <>
-                        <h3>This step is not relevant to your wallet</h3>
-                        <h3>Click 'Next Step' to proceed with migration</h3>
-                        <h4>Skipping steps may result in loss of funds:</h4>
-                        <h4>Take your time and follow the steps in order!</h4>
+                        <h5>This step is not relevant to your wallet</h5>
+                        <h5>Click 'Next Step' to proceed with migration</h5>
+                        <br/><br/>
+                        <h5>Skipping steps may result in loss of funds:</h5>
+                        <h5>Take your time and follow the steps in order!</h5>
                     </>
                 }
                         
@@ -370,17 +374,19 @@ const UpgradeComponent = (props) => {
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
                     <>
-                        <h3>You have migrated all BondV3 allocations</h3>
-                        <h3>Click 'Next Step' to proceed with migration</h3>
-                        <h4>Skipping steps may result in loss of funds:</h4>
-                        <h4>Take your time and follow the steps in order!</h4>
+                        <h5>You have migrated all BondV3 allocations</h5>
+                        <h5>Click 'Next Step' to proceed with migration</h5>
+                        <br/><br/>
+                        <h5>Skipping steps may result in loss of funds:</h5>
+                        <h5>Take your time and follow the steps in order!</h5>
                     </>
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length === 0 &&
                     <>
-                        <h3>This step is not relevant to your wallet</h3>
-                        <h3>Click 'Finish' to finalise migration</h3>
-                        <h4>This last 'Finish' step is critical! Do not skip!</h4>
+                        <h5>This step is not relevant to your wallet</h5>
+                        <br/><br/>
+                        <h5>Click 'Finish' to finalise migration</h5>
+                        <h5>This last 'Finish' step is critical! Do not skip!</h5>
                     </>
                 }
             </div>
