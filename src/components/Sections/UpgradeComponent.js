@@ -172,6 +172,7 @@ const UpgradeComponent = (props) => {
                                         address={c.poolAddress}
                                         symbol={c.symbol}
                                         units={c.units}
+                                        member={member}
                                         locked={c.locked}
                                         harvest={harvest}
                                         loadingHarvest={loadingHarvest}

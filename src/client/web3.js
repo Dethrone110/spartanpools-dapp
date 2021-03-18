@@ -12,7 +12,7 @@ import DAO from '../artifacts/Dao.json'
 import Bondv2 from '../artifacts/BondV2.json'
 import Bondv3 from '../artifacts/BondV3.json'
 
-const net = '';
+const net = 'testnet';
 
 // CURRENT CONTRACT ADDRESSES
 export const BNB_ADDR = '0x0000000000000000000000000000000000000000'
@@ -26,7 +26,7 @@ export const INCENTIVE_ADDR = net === 'testnet' ? '0xc241d694d51db9e934b147130cf
 
 // OLD CONTRACT ADDRESSES
 export const BONDv1_ADDR = net === 'testnet' ? '0x4551457647f6810a917AF70Ca47252BbECD2A36c' : '0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da'
-export const BONDv2_ADDR = net === 'testnet' ? '0xd2d39bC20A430Fa8CB4bFdF87A2E253Aa444Fc7C' : '0xE6844821B03828Fd4067167Bc258FA1EEFD1cCdf'
+export const BONDv2_ADDR = net === 'testnet' ? '0x2021047f7e3f8c9882e502a63ef036daefa0b5f6' : '0xE6844821B03828Fd4067167Bc258FA1EEFD1cCdf'
 export const BONDv3a_ADDR = '0x5059d9f4611020fcbdb8d7ba120579df32264142'
 export const BONDv3b_ADDR = '0x0a5fecabbdb1908b5f58a26e528a21663c824137'
 export const ROUTERv1_ADDR = net === 'testnet' ? '0x94fFAD4568fF00D921C76aA158848b33D7Bd65d3' : '0x4ab5b40746566c09f4B90313D0801D3b93f56EF5'
