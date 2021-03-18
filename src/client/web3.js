@@ -11,6 +11,7 @@ import UTILS from '../artifacts/Utils.json'
 import DAO from '../artifacts/Dao.json'
 import Bondv2 from '../artifacts/BondV2.json'
 import Bondv3 from '../artifacts/BondV3.json'
+import Migrate from '../artifacts/SPARTANUPGRADE.json'
 
 const net = 'testnet';
 
@@ -23,6 +24,7 @@ export const DAO_ADDR = net === 'testnet' ? '0xbC6134840a2604D00222F276c16d143dd
 export const ROUTER_ADDR = net === 'testnet' ? '0x772E6dE5165A70B9a6aBe33fa20ddB78C28E6f50' : '0x6239891FC4030dc050fB9F7083aa68a2E4Fe426D'
 export const BONDv3_ADDR = net === 'testnet' ? '0x696a6B50d7FC6213a566fCC197acced4c4dDefa2' : '0xf2EbA4b92fAFD47a6403d24a567b38C07D7A5b43'
 export const INCENTIVE_ADDR = net === 'testnet' ? '0xc241d694d51db9e934b147130cfefe8385813b86' : '0xdbe936901aeed4718608d0574cbaab01828ae016'
+export const MIGRATE_ADDR = net === 'testnet' ? '0x510ce6F1b28d52042262AF3620291B5B820e3ec5' : '' // ADD MAINNET WHEN DEPLOYED
 
 // OLD CONTRACT ADDRESSES
 export const BONDv1_ADDR = net === 'testnet' ? '0x4551457647f6810a917AF70Ca47252BbECD2A36c' : '0xDa7d913164C5611E5440aE8c1d3e06Df713a13Da'
@@ -43,6 +45,7 @@ export const UTILS_ABI = UTILS.abi
 export const DAO_ABI = DAO.abi
 export const BONDv2_ABI = Bondv2.abi
 export const BONDv3_ABI = Bondv3.abi
+export const MIGRATE_ABI = Migrate.abi
 
 export const explorerURL = net === 'testnet' ? 'https://testnet.bscscan.com/' : 'https://bscscan.com/'
 
@@ -756,4 +759,21 @@ export const getClaimableLPBondv3 = async (member, asset) => {
 export const getBaseAllocation = async () => {
     let allocation = await getSpartaContract().methods.balanceOf(BONDv3_ADDR).call()
 return allocation;
+}
+
+export const getMigrationContract = () => {
+    var web3 = getWeb3()
+    return new web3.eth.Contract(MIGRATE_ABI, MIGRATE_ADDR)
+}
+
+export const migrateLiq = async (token, amount) => {
+    const units = await getMigrationContract().methods.migrateLiquidity(token, amount).call()
+    console.log(units)
+    return units
+}
+
+export const migrateBond = async (token) => {
+    const upgrade = await getMigrationContract().methods.upgradeBond(token).call()
+    console.log(upgrade)
+    return upgrade
 }

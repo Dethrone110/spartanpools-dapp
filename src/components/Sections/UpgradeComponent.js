@@ -209,7 +209,10 @@ const UpgradeComponent = (props) => {
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length > 0 &&   
                     <>
                         <CardSubtitle className="m-3">
-                            <br/>Migrate your pool liquidity into the new Spartan Pools to earn Fees/Dividends<br/>
+                            Migrate your pooled liquidity into the new Spartan Pools to resume earning Fees + Dividends<br/>
+                            For each liquidity pool; there will be two transactions:
+                            <li>1. Allow the migration contract to interact with your LP tokens</li>
+                            <li>2. Send your LP tokens through to the new SpartanProtocol Pools V2</li>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
 
@@ -228,7 +231,6 @@ const UpgradeComponent = (props) => {
                                         symbAddr={c.address}
                                         address={c.poolAddress}
                                         symbol={c.symbol}
-                                        
                                         units={c.units}
                                     />
                             )}
