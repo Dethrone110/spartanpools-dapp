@@ -1,18 +1,16 @@
 import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
-import queryString from 'query-string';
 import {getRewards, getDaoContract, 
     updateWalletData, BNB_ADDR, SPARTA_ADDR,
     getMemberDetail, getTotalWeight, getGasPrice, getBNBBalance,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
-import { bn, one, formatBN, convertFromWei, convertToWei, formatAllUnits, formatGranularUnits, daysSince, hoursSince } from '../../utils'
+import { bn, hoursSince } from '../../utils'
 import "../../assets/scss/custom/components/_rightbar.scss";
 import BigNumber from 'bignumber.js';
 import {
-    Row, Col, InputGroup, InputGroupAddon, Label, UncontrolledTooltip,
-    FormGroup, Card, CardTitle, Table, CardSubtitle, CardBody,Container,
+    Row, Col, Card, CardTitle, Table, CardSubtitle,
     Spinner, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, Progress
 } from "reactstrap"
 import { makeStyles } from '@material-ui/core/styles';
@@ -267,7 +265,7 @@ const UpgradeComponent = (props) => {
                             {context.sharesData === true &&
                              <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                             }
-                            {context.sharesData !== true && context.sharesData.filter(x => x.bondv2Member == true).length > 0 &&
+                            {context.sharesData !== true && context.sharesData.filter(x => x.bondv2Member === true).length > 0 &&
                                     <div className="text-center m-2">Loaded all wallet LP tokens</div>
                             }
                             </td>
@@ -278,9 +276,9 @@ const UpgradeComponent = (props) => {
                 
              case 3:
                  if(context.sharesData &&
-                    context.sharesData.filter(x => x.bondv3Member == true).length > 0){
+                    context.sharesData.filter(x => x.bondv3Member === true).length > 0){
                         return  context.sharesData &&
-                        context.sharesData.filter(x => x.bondv3Member == true).length > 0 &&
+                        context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
                         <div key={0} className="table-responsive">
                                 
                         <CardSubtitle className="m-3">
@@ -312,7 +310,7 @@ const UpgradeComponent = (props) => {
                                     {context.sharesData === true &&
                                      <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                     }
-                                    {context.sharesData !== true && context.sharesData.filter(x => x.bondv3Member == true).length > 0 &&
+                                    {context.sharesData !== true && context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
                                             <div className="text-center m-2">Loaded all wallet LP tokens</div>
                                     }
                                     </td>
@@ -347,11 +345,11 @@ const UpgradeComponent = (props) => {
                      <Col sm={12} className="mr-20">
                                 <div>
                                     <h1 className="text-center m-2 ">Spartan Protocol Migration</h1>
-                                    {context.walletDataLoading == true &&
+                                    {context.walletDataLoading === true &&
                                                  <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                                  }
                                    {context.walletDataLoading !== true &&
-                                    <Stepper className ="m-2"activeStep={activeStep} orientation="vertical">
+                                    <Stepper id="card-migration" className ="m-2" activeStep={activeStep} orientation="vertical">
 
                                         {steps.map((label, index) => (
                                             <Step key={index}>
