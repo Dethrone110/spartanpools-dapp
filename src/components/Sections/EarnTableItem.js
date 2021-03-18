@@ -276,6 +276,7 @@ export const EarnTableItem = (props) => {
                                 <Button color="secondary" onClick={()=>toggleLock()}>Cancel</Button>
                         </ModalFooter>
                     </Modal>
+
                     <Modal isOpen={showUnlockModal} toggle={()=>toggleUnlock()}>
                         <ModalHeader toggle={()=>toggleUnlock()}>
                             {isMember === false &&
@@ -297,25 +298,21 @@ export const EarnTableItem = (props) => {
                         <ModalBody>
                             {isMember === false &&
                                 <>
-                                    Unlocking your tokens disables them from earning yield.<br/>
-                                    Doing so also decreases your weight in the DAO.<br/>
                                     Confirming will unlock all of your available {props.symbol} tokens.<br/>
-                                    However, you can re-lock them any time.<br/>
+                                    We need to do this before you can migrate your liquidity to the new pools!<br/>
                                 </>
                             }
                             {isMember === true && props.lastHarvest <= 6 &&
                                 <>
-                                    Unlocking your tokens disables them from earning yield.<br/>
-                                    Doing so also decreases your weight in the DAO.<br/>
                                     Confirming will unlock all of your available {props.symbol} tokens.<br/>
-                                    However, you can re-lock them any time.<br/>
+                                    We need to do this before you can migrate your liquidity to the new pools!<br/>
                                 </>
                             }
                             {isMember === true && props.lastHarvest > 6 &&
                                 <>
-                                    Before you unlock your tokens, a harvest must be performed.<br/>
-                                    This is due to your DAO position changing, which has effects on your harvestable SPARTA calculations.<br/>
-                                    Harvesting now ensures you do not miss out on your hard earned rewards!<br/>
+                                    Before you unlock your tokens and migrate liquidity to the new pools, a harvest must be performed.<br/>
+                                    Harvesting now ensures you don't miss out on the last of your harvest rewards from the V1 Lock+Earn<br/>
+                                    Don't worry! These incentives will be even higher in V2!<br/>
                                 </>
                             }
                         </ModalBody>
