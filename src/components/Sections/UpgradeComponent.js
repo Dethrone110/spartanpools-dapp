@@ -203,6 +203,124 @@ const UpgradeComponent = (props) => {
         await refreshData()
     }
 
+    const migrateBondV2 = async () => {
+        setNotifyMessage('...')
+        setLoadingHarvest(true)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
+        let contract = getMigrationContract()
+        console.log('Estimating gas', estGasPrice)
+        await contract.methods.upgradeBond(BNB_ADDR).estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setLoadingHarvest(false)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setLoadingHarvest(false)
+        }
+        else if (enoughBNB === true) {
+            console.log('Upgrading BondV2 -> BondV4', estGasPrice, gasLimit, gasFee)
+            await contract.methods.upgradeBond(BNB_ADDR).send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                    setLoadingHarvest(false)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('BondV2 upgrade pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('BondV2 upgrade complete!')
+                setNotifyType('success')
+                setLoadingHarvest(false)
+            }
+        }
+        await refreshData()
+    }
+
+    const migrateBondV3 = async () => {
+        setNotifyMessage('...')
+        setLoadingHarvest(true)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
+        let contract = getMigrationContract()
+        console.log('Estimating gas', estGasPrice)
+        await contract.methods.upgradeBONDv3().estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setLoadingHarvest(false)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setLoadingHarvest(false)
+        }
+        else if (enoughBNB === true) {
+            console.log('Upgrading BondV3 -> BondV4', estGasPrice, gasLimit, gasFee)
+            await contract.methods.migrateLiquidity().send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                    setLoadingHarvest(false)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('BondV3 upgrade pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('BondV3 upgrade complete!')
+                setNotifyType('success')
+                setLoadingHarvest(false)
+            }
+        }
+        await refreshData()
+    }
+
     function getStepContent(step) {
         switch (step) {
             case 0:
@@ -278,7 +396,7 @@ const UpgradeComponent = (props) => {
                             variant="contained"
                             color="primary"
                             onClick={() => migrateLiq()}
-                            className={"m-2"}
+                            className="my-2 mr-1"
                         >
                             <i className="bx bx-swim align-middle"/><br/>
                             Migrate Liquidity
@@ -288,23 +406,19 @@ const UpgradeComponent = (props) => {
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 &&   
                     <>
-                        <div class="circle-loader">
-                            <div class="checkmark draw"></div>
-                        </div>
                         <CardSubtitle className="mt-1 mb-3">
                             Liquidity migration complete!<br/>
                             Click 'Next Step' to proceed to 'BondV2' migration
                         </CardSubtitle>
                         <div class="circle-loader load-complete">
-                            <div class="checkmark draw"></div>
+                            <div class="checkmark draw" style={{display: "block"}}></div>
                         </div>
                     </>
                 }
             </div>
             case 2:
-                        return context.sharesData &&
-                        <div key={0} className="table-responsive">
-
+                return context.sharesData &&
+                <div key={0} className="table-responsive">
 
                 {context.sharesData?.filter(x => x.locked > 0).length === 0 &&
                     context.sharesData.filter(x => x.units > 0).length === 0 &&
@@ -348,12 +462,33 @@ const UpgradeComponent = (props) => {
                         </Table>
                     </>
                 }
+                {context.sharesData?.filter(x => x.locked > 0).length === 0 &&
+                    context.sharesData.filter(x => x.units > 0).length > 0 &&
+                    context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
+                    context.sharesData.filter(x => x.bondv2Member > 0).length > 0 &&
+                    <>
+                        <CardSubtitle className="mt-1 mb-3">
+                            Migrate your Bondv2 LP tokens into the new Spartan Pools to resume earning Fees + Dividends<br/>
+                        </CardSubtitle>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={ () => migrateBondV2()}
+                            className="my-2 mr-1"
+                        >
+                            Finalise Upgrading BondV2 to BondV4
+                        </Button>
+                    </>
+                }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
                     <>
                         <CardSubtitle className="mt-1 mb-3">
                             BondV2 migration complete!<br/>
                             Click 'Next Step' to proceed to 'BondV3' migration
                         </CardSubtitle>
+                        <div class="circle-loader load-complete">
+                            <div class="checkmark draw" style={{display: "block"}}></div>
+                        </div>
                     </>
                 }
                 {/* {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length === 0 &&
@@ -383,10 +518,10 @@ const UpgradeComponent = (props) => {
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={console.log('migrate bondv3')}
-                            className={"m-2"}
+                            onClick={ () => migrateBondV3()}
+                            className="my-2 mr-1"
                         >
-                            MIGRATE BONDV3
+                            Upgrade BondV3 to BondV4
                         </Button>
                     </>
                 }
@@ -396,6 +531,9 @@ const UpgradeComponent = (props) => {
                             BondV3 migration complete!<br/>
                             *IMPORTANT* Click 'Finish' to finalise migration!
                         </CardSubtitle>
+                        <div class="circle-loader load-complete">
+                            <div class="checkmark draw" style={{display: "block"}}></div>
+                        </div>
                     </>
                 }
                 {/* {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length === 0 &&
@@ -434,8 +572,8 @@ const UpgradeComponent = (props) => {
                                 <div>
                                     <h1 className="text-center m-2 ">Spartan Protocol Migration</h1>
                                     {context.walletDataLoading === true &&
-                                                 <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                                 }
+                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
+                                    }
                                    {context.walletDataLoading !== true &&
                                     <Stepper id="card-migration" className ="m-2 px-0 px-sm-2" activeStep={activeStep} orientation="vertical">
 
@@ -446,19 +584,19 @@ const UpgradeComponent = (props) => {
                                                 
                                                 <StepContent>
                                                     {getStepContent(index)}
-                                                    <div className="m-2">
+                                                    <div>
                                                         <div>
                                                             <Button
                                                                 hidden={activeStep === 0}
                                                                 onClick={handleBack}
-                                                                className={"m-2"}
+                                                                className="my-2 mr-1"
                                                             > Back </Button>
                                                             {activeStep === 0 && context.sharesData?.filter(x => x.locked > 0).length === 0 && 
                                                                 <Button
                                                                     variant="contained"
                                                                     color="primary"
                                                                     onClick={handleNext}
-                                                                    className={"m-2"}
+                                                                    className="my-2 mr-1"
                                                                 >
                                                                     {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
                                                                 </Button>
@@ -469,7 +607,7 @@ const UpgradeComponent = (props) => {
                                                                     variant="contained"
                                                                     color="primary"
                                                                     onClick={handleNext}
-                                                                    className={"m-2"}
+                                                                    className="my-2 mr-1"
                                                                 >
                                                                     {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
                                                                 </Button>
@@ -481,12 +619,12 @@ const UpgradeComponent = (props) => {
                                                                     variant="contained"
                                                                     color="primary"
                                                                     onClick={handleNext}
-                                                                    className={"m-2"}
+                                                                    className="my-2 mr-1"
                                                                 >
                                                                     {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
                                                                 </Button>
                                                             }
-                                                            {activeStep === 2 && context.sharesData?.filter(x => x.locked > 0).length === 0 &&
+                                                            {activeStep === 3 && context.sharesData?.filter(x => x.locked > 0).length === 0 &&
                                                                 context.sharesData.filter(x => x.units > 0).length === 0 &&
                                                                 context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
                                                                 context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 &&
@@ -494,7 +632,7 @@ const UpgradeComponent = (props) => {
                                                                     variant="contained"
                                                                     color="primary"
                                                                     onClick={handleNext}
-                                                                    className={"m-2"}
+                                                                    className="my-2 mr-1"
                                                                 >
                                                                     {activeStep === steps.length - 1 ? 'Finish' : 'Next Step'}
                                                                 </Button>
@@ -513,7 +651,10 @@ const UpgradeComponent = (props) => {
                                                 Migration to SpartanProtocolV2 Complete!
                                                 If you were locked in Lock+Earn you will just need to lock-up again in DAppV2 with your new STP2 LP tokens!
                                             </Typography>
-                                            <Button href={'https://dapp.spartanprotocol.org/'} color="primary" className={"m-2"}>
+                                            <div class="circle-loader load-complete">
+                                                <div class="checkmark draw" style={{display: "block"}}></div>
+                                            </div>
+                                            <Button href={'https://dapp.spartanprotocol.org/'} color="primary" className="my-2 mr-1">
                                                Proceed to DappV2!
                                           </Button>
                                         </Paper>
