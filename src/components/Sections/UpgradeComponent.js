@@ -151,7 +151,7 @@ const UpgradeComponent = (props) => {
                         
                         {context.sharesData.filter(x => x.locked > 0).length > 0 &&
                             <>
-                                <CardSubtitle className="mb-3">
+                                <CardSubtitle className="mt-1 mb-3">
                                     <br/>Unlock your LP tokens from the DAO to join the new Spartan Shield Wall!<br/>
                                 </CardSubtitle>
 
@@ -192,11 +192,10 @@ const UpgradeComponent = (props) => {
                         }
                         {context.sharesData.filter(x => x.locked > 0).length === 0 &&
                             <>
-                                <h5>You have no LP tokens locked in the DAO</h5>
-                                <h5>Click 'Next Step' to proceed with migration</h5>
-                                <br/><br/>
-                                <h5>Skipping steps may result in loss of funds:</h5>
-                                <h5>Take your time and follow the steps in order!</h5>
+                                <CardSubtitle className="mt-1 mb-3">
+                                    'Dao' migration complete!<br/>
+                                    Click 'Next Step' to proceed to 'Liquidity' migration
+                                </CardSubtitle>
                             </>
                         }
                     </div>
@@ -208,53 +207,27 @@ const UpgradeComponent = (props) => {
 
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length > 0 &&   
                     <>
-                        <CardSubtitle className="m-3">
-                            Migrate your pooled liquidity into the new Spartan Pools to resume earning Fees + Dividends<br/>
-                            For each liquidity pool; there will be two transactions:
-                            <li>1. Allow the migration contract to interact with your LP tokens</li>
-                            <li>2. Migrate your LP tokens through to the new SpartanProtocol Pools V2</li>
+                        <CardSubtitle className="mt-1 mb-3">
+                            Migrate your pooled liquidity into the new Spartan Pools to resume earning Fees + Dividends.<br/><br/>
+                            Standard pools' liquidity will be migrated to SPT2 (last step will send you to the new DAppV2).<br/><br/>
+                            Non-standard pools' liquidity will be withdrawn to your wallet.
                         </CardSubtitle>
-                        <Table className="table-centered mb-0">
-
-                            <thead className="center">
-                            <tr>
-                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
-                                <th className="d-none d-lg-table-cell" scope="col">{props.t("LP Tokens")}</th>
-                                <th scope="col">{props.t("Action")}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                                    <LPTableItem 
-                                        key={c.address}
-                                        symbAddr={c.address}
-                                        address={c.poolAddress}
-                                        symbol={c.symbol}
-                                        units={c.units}
-                                    />
-                            )}
-                                <tr>
-                                    <td colSpan="5">
-                                    {context.sharesData === true &&
-                                    <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                    }
-                                    {context.sharesData !== true && context.sharesData.filter(x => x.units + x.locked > 0).length > 0 &&
-                                            <div className="text-center m-2">Loaded all wallet LP tokens</div>
-                                    }
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={console.log('migrate liquidity')}
+                            className={"m-2"}
+                        >
+                            MIGRATE LIQ
+                        </Button>
                     </>
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 &&   
                     <>
-                        <h5>You have no LP tokens in your wallet</h5>
-                        <h5>Click 'Next Step' to proceed with migration</h5>
-                        <br/><br/>
-                        <h5>Skipping steps may result in loss of funds:</h5>
-                        <h5>Take your time and follow the steps in order!</h5>
+                        <CardSubtitle className="mt-1 mb-3">
+                            Liquidity migration complete!<br/>
+                            Click 'Next Step' to proceed to 'BondV2' migration
+                        </CardSubtitle>
                     </>
                 }
             </div>
@@ -267,7 +240,7 @@ const UpgradeComponent = (props) => {
                     context.sharesData.filter(x => x.units > 0).length === 0 &&
                     context.sharesData.filter(x => x.bondedv2LP > 0).length > 0 &&
                     <>
-                        <CardSubtitle className="m-3">
+                        <CardSubtitle className="mt-1 mb-3">
                             Migrate your Bondv2 LP tokens into the new Spartan Pools to resume earning Fees + Dividends<br/>
                         </CardSubtitle>
                         <Table className="table-centered mb-0">
@@ -305,24 +278,22 @@ const UpgradeComponent = (props) => {
                         </Table>
                     </>
                 }
-                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length > 0 &&
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
                     <>
-                        <h5>You have migrated all BondV2 allocations</h5>
-                        <h5>Click 'Next Step' to proceed with migration</h5>
-                        <br/><br/>
-                        <h5>Skipping steps may result in loss of funds:</h5>
-                        <h5>Take your time and follow the steps in order!</h5>
+                        <CardSubtitle className="mt-1 mb-3">
+                            BondV2 migration complete!<br/>
+                            Click 'Next Step' to proceed to 'BondV3' migration
+                        </CardSubtitle>
                     </>
                 }
-                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length === 0 &&
+                {/* {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondv2Member === true).length === 0 &&
                     <>
-                        <h5>This step is not relevant to your wallet</h5>
-                        <h5>Click 'Next Step' to proceed with migration</h5>
-                        <br/><br/>
-                        <h5>Skipping steps may result in loss of funds:</h5>
-                        <h5>Take your time and follow the steps in order!</h5>
+                        <CardSubtitle className="mt-1 mb-3">
+                            This step is not relevant to your wallet<br/>
+                            Click 'Next Step' to proceed to 'BondV3' migration
+                        </CardSubtitle>
                     </>
-                }
+                } */}
                         
             </div>
                 
@@ -336,61 +307,35 @@ const UpgradeComponent = (props) => {
                     context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 &&
                     context.sharesData.filter(x => x.bondedv3LP > 0).length > 0 &&
                     <>                        
-                        <CardSubtitle className="m-3">
-                            <br/>Migrate your bondv3 assets into the new Spartan Pools to earn Fees/Dividends<br/>
+                        <CardSubtitle className="mt-1 mb-3">
+                            Migrate your Bondv3 LP tokens into the new Spartan Pools to resume earning Fees + Dividends<br/>
                         </CardSubtitle>
-                        <Table className="table-centered mb-0">
-
-                            <thead className="center">
-                            <tr>
-                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Pool")}</th>
-                                <th className="d-none d-lg-table-cell" scope="col">{props.t("Bonded LP Tokens")}</th>
-                                <th scope="col">{props.t("Action")}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            {context.sharesData.filter(x => (x.units + x.locked) > 0).sort((a, b) => (parseFloat(a.units + a.locked) > parseFloat(b.units + b.locked)) ? -1 : 1).map(c =>
-                                    <Bondv3TableItem 
-                                        key={c.address}
-                                        symbAddr={c.address}
-                                        address={c.poolAddress}
-                                        symbol={c.symbol}
-                                        bondedv3LP={c.bondedv3LP}
-                                        bondv3Member={c.bondv3Member}
-                                    />
-                            )}
-                                <tr>
-                                    <td colSpan="5">
-                                    {context.sharesData === true &&
-                                        <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
-                                    }
-                                    {context.sharesData !== true && context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
-                                            <div className="text-center m-2">Loaded all wallet LP tokens</div>
-                                    }
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={console.log('migrate bondv3')}
+                            className={"m-2"}
+                        >
+                            MIGRATE BONDV3
+                        </Button>
                     </>
                 }
-                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length > 0 &&
+                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 &&
                     <>
-                        <h5>You have migrated all BondV3 allocations</h5>
-                        <h5>Click 'Next Step' to proceed with migration</h5>
-                        <br/><br/>
-                        <h5>Skipping steps may result in loss of funds:</h5>
-                        <h5>Take your time and follow the steps in order!</h5>
+                        <CardSubtitle className="mt-1 mb-3">
+                            BondV3 migration complete!<br/>
+                            *IMPORTANT* Click 'Finish' to finalise migration!
+                        </CardSubtitle>
                     </>
                 }
-                {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length === 0 &&
+                {/* {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 && context.sharesData.filter(x => x.bondedv2LP > 0).length === 0 && context.sharesData.filter(x => x.bondedv3LP > 0).length === 0 && context.sharesData.filter(x => x.bondv3Member === true).length === 0 &&
                     <>
-                        <h5>This step is not relevant to your wallet</h5>
-                        <br/><br/>
-                        <h5>Click 'Finish' to finalise migration</h5>
-                        <h5>This last 'Finish' step is critical! Do not skip!</h5>
+                        <CardSubtitle className="mt-1 mb-3">
+                            Nearly done!<br/>
+                            *IMPORTANT* Click 'Finish' to finalise migration!
+                        </CardSubtitle>
                     </>
-                }
+                } */}
             </div>
             // no default
         }
@@ -492,11 +437,14 @@ const UpgradeComponent = (props) => {
                                     </Stepper>
 }
                                     
-                                    {activeStep === steps.length && (
+                                    {activeStep === 1 && (
                                         <Paper square elevation={0} className="p-3">
-                                            <Typography>All steps completed - you&apos;re finished :P</Typography>
-                                            <Button href={'https://spartanprotocol.org/'} color="primary" className={"m-2"}>
-                                               Lets Go SPARTAAA DappV2!
+                                            <Typography>
+                                                Migration to SpartanProtocolV2 Complete!
+                                                If you were locked in Lock+Earn you will just need to lock-up again in DAppV2 with your new STP2 LP tokens!
+                                            </Typography>
+                                            <Button href={'https://dapp.spartanprotocol.org/'} color="primary" className={"m-2"}>
+                                               Proceed to DappV2!
                                           </Button>
                                         </Paper>
                                     )}
