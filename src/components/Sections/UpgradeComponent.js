@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { Context } from "../../context"
 import {getRewards, getDaoContract, 
     updateWalletData, BNB_ADDR, SPARTA_ADDR,
-    getMemberDetail, getTotalWeight, getGasPrice, getBNBBalance,
+    getMemberDetail, getTotalWeight, getGasPrice, getBNBBalance, getMigrationContract,
 } from "../../client/web3"
 import Notification from '../Common/notification'
 
@@ -18,6 +18,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import './upgrade.scss'
 
 import { withNamespaces } from 'react-i18next'
 import { withRouter, Link } from "react-router-dom"
@@ -143,6 +144,65 @@ const UpgradeComponent = (props) => {
         setNotifyType('success')
     }
 
+    const migrateLiq = async () => {
+        setNotifyMessage('...')
+        setLoadingHarvest(true)
+        let gasFee = 0
+        let gasLimit = 0
+        let contTxn = false
+        const estGasPrice = await getGasPrice()
+        let contract = getMigrationContract()
+        console.log('Estimating gas', estGasPrice)
+        await contract.methods.migrateLiquidity().estimateGas({
+            from: context.account,
+            gasPrice: estGasPrice,
+        }, function(error, gasAmount) {
+            if (error) {
+                console.log(error)
+                setNotifyMessage('Transaction error, do you have enough BNB for gas fee?')
+                setNotifyType('warning')
+                setLoadingHarvest(false)
+            }
+            gasLimit = (Math.floor(gasAmount * 1.5)).toFixed(0)
+            gasFee = (bn(gasLimit).times(bn(estGasPrice))).toFixed(0)
+        })
+        let enoughBNB = true
+        var gasBalance = await getBNBBalance(context.account)
+        if (bn(gasBalance).comparedTo(bn(gasFee)) === -1) {
+            enoughBNB = false
+            setNotifyMessage('You do not have enough BNB for gas fee!')
+            setNotifyType('warning')
+            setLoadingHarvest(false)
+        }
+        else if (enoughBNB === true) {
+            console.log('Migrating Liquidity', estGasPrice, gasLimit, gasFee)
+            await contract.methods.migrateLiquidity().send({
+                from: context.account,
+                gasPrice: estGasPrice,
+                gas: gasLimit,
+            }, function(error, transactionHash) {
+                if (error) {
+                    console.log(error)
+                    setNotifyMessage('Transaction cancelled')
+                    setNotifyType('warning')
+                    setLoadingHarvest(false)
+                }
+                else {
+                    console.log('txn:', transactionHash)
+                    setNotifyMessage('Liquidity migration pending...')
+                    setNotifyType('success')
+                    contTxn = true
+                }
+            })
+            if (contTxn === true) {
+                setNotifyMessage('Liquidity migration complete!')
+                setNotifyType('success')
+                setLoadingHarvest(false)
+            }
+        }
+        await refreshData()
+    }
+
     function getStepContent(step) {
         switch (step) {
             case 0:
@@ -196,6 +256,9 @@ const UpgradeComponent = (props) => {
                                     'Dao' migration complete!<br/>
                                     Click 'Next Step' to proceed to 'Liquidity' migration
                                 </CardSubtitle>
+                                <div class="circle-loader load-complete">
+                                    <div class="checkmark draw" style={{display: "block"}}></div>
+                                </div>
                             </>
                         }
                     </div>
@@ -208,26 +271,33 @@ const UpgradeComponent = (props) => {
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length > 0 &&   
                     <>
                         <CardSubtitle className="mt-1 mb-3">
-                            Migrate your pooled liquidity into the new Spartan Pools to resume earning Fees + Dividends.<br/><br/>
-                            Standard pools' liquidity will be migrated to SPT2 (last step will send you to the new DAppV2).<br/><br/>
-                            Non-standard pools' liquidity will be withdrawn to your wallet.
+                            Migrate your pooled liquidity into the new Spartan Pools to resume earning Fees + Dividends.<br/>
+                            Pools that aren't available in DAppV2 will be withdrawn to your wallet.
                         </CardSubtitle>
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={console.log('migrate liquidity')}
+                            onClick={() => migrateLiq()}
                             className={"m-2"}
                         >
-                            MIGRATE LIQ
+                            <i className="bx bx-swim align-middle"/><br/>
+                            Migrate Liquidity
                         </Button>
+                        
                     </>
                 }
                 {context.sharesData.filter(x => x.locked > 0).length === 0 && context.sharesData.filter(x => x.units > 0).length === 0 &&   
                     <>
+                        <div class="circle-loader">
+                            <div class="checkmark draw"></div>
+                        </div>
                         <CardSubtitle className="mt-1 mb-3">
                             Liquidity migration complete!<br/>
                             Click 'Next Step' to proceed to 'BondV2' migration
                         </CardSubtitle>
+                        <div class="circle-loader load-complete">
+                            <div class="checkmark draw"></div>
+                        </div>
                     </>
                 }
             </div>
@@ -358,8 +428,8 @@ const UpgradeComponent = (props) => {
 
     return (
         <>
-            <Card >
-                <Row >
+            <Card>
+                <Row>
                      <Col sm={12} className="mr-20">
                                 <div>
                                     <h1 className="text-center m-2 ">Spartan Protocol Migration</h1>
@@ -367,7 +437,7 @@ const UpgradeComponent = (props) => {
                                                  <div className="text-center m-2"><i className="bx bx-spin bx-loader"/></div>
                                                  }
                                    {context.walletDataLoading !== true &&
-                                    <Stepper id="card-migration" className ="m-2" activeStep={activeStep} orientation="vertical">
+                                    <Stepper id="card-migration" className ="m-2 px-0 px-sm-2" activeStep={activeStep} orientation="vertical">
 
                                         {steps.map((label, index) => (
                                             <Step key={index}>
@@ -437,7 +507,7 @@ const UpgradeComponent = (props) => {
                                     </Stepper>
 }
                                     
-                                    {activeStep === 1 && (
+                                    {activeStep === steps.length && (
                                         <Paper square elevation={0} className="p-3">
                                             <Typography>
                                                 Migration to SpartanProtocolV2 Complete!
